@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenesisGo FX</title>
+    <link rel="stylesheet" href="css/winstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css?v=1" />
+</head>
+<body>
+<login class="login">
+	<div class="page-header">
+	    <div class="container">
+	        <div class="row">
+	            <div class="col-xs-24 col-sm-16">
+	                <h2><span class="color-type-primary">GenesisGo FX</span> <span class="color-type-secondary"></span></h2>
+	                <div class="type-sh2">The official Genesis Go Desktop & Mobile application</div>
+			<br/>
+        	    </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="container" style="margin-top:7%;">
+            <div class="row">
+                <div class="col-xs-24 col-sm-6 col-md-offset-9">
+		    <form class="login-form">
+    			<div class="form-group">
+        		    <label for="username">Username</label>
+        		    <input type="text" class="form-control" id="username" placeholder="Username">
+    			</div>
+    
+    			<div class="form-group">
+        		    <label for="password">Password</label>
+        		    <input type="password" class="form-control" id="password" placeholder="Password">
+    			</div>
+
+    			<button type="submit" class="btn btn-default">Login</button>
+		    </form>
+            	</div>
+	    </div>
+	</div>
+</login>
+
+<main class="hidden">
+    <nav class="navbar navbar-default" style="position:fixed;width:100%;">
+        <div class="navbar-global theme-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <i class="glyph glyph-hamburger"></i>
+                    </button>
+                    <a href="/" class="navbar-brand">
+                        <img src="https://genesisgo.co/images/genesis_go_logo_black.png" height="23" />
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Projektek<i class="glyph glyph-chevron-down-2"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="/new-project">Új projekt</a></li>
+                                <li class="divider"></li>
+                                <li><a href="/list-all">Minden projekt</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="color-type-secondary calendar" href="#">Naptár</a>
+                        </li>
+                        <li>
+                            <a class="color-type-secondary todos" href="#">Feladatok</a>
+                        </li>
+                        <li>
+                            <a class="color-type-secondary store" href="#">Raktár</a>
+                        </li>
+                        <li>
+                            <a class="color-type-secondary logout" href="#">Kilépés</a>
+                        </li>
+                    </ul>
+                    <div class="navbar-form navbar-right search-form" role="search">
+                        <div class="form-group">
+                            <input type="search" class="form-control" placeholder="Keresés">
+                        </div>
+                        <button type="submit" class="btn btn-default search"></button>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <projects>
+        
+        <div class="panel-heading fixable projectheadfixed hidden">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-24">
+			            <h6>Projektek: összes</h6>
+			            <ul class="nav nav-pills" data-scroll="smooth">
+                            <li role="presentation">
+                                <a href="#bootstrap-colors">Összes</a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#mdl-colors">Ajánlatok</a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#mdl-alt-colors">Megrendelések</a>
+                            </li>
+                        </ul>
+			<div class="panel-actions addonitems">
+				            <a href="javascript:;" title="Összes Projekt" onclick="location.href = '/project/all';" class="btn-add"><i class="fa fa-cubes"></i></a>
+				            <a href="javascript:;" title="Árajánlatok" onclick="location.href = '/project/quote';" class="btn-add"><i class="fa fa-thumbs-o-up"></i></a>
+				            <a href="javascript:;" title="Online ajánlatkérések" onclick="location.href = '/project/request';" class="btn-add"><i class="fa fa-cart-arrow-down"></i></a>
+				            <a href="javascript:;" title="Megrendelések" onclick="location.href = '/project/order';" class="btn-add"><i class="fa fa-list-alt"></i></a>
+				            <a href="javascript:;" title="Viszonteladói megrendelések" onclick="location.href = '/project/resorder';" class="btn-add"><i class="fa fa-cogs"></i></a>
+				            <a href="javascript:;" title="Gyártói megrendelések" onclick="location.href = '/project/manorder';" class="btn-add"><i class="fa fa-industry"></i></a>
+				            <a href="javascript:;" title="Komplett, szállítható" onclick="location.href = '/project/shipping';" class="btn-add"><i class="fa fa-truck"></i></a>
+				            <a href="javascript:;" title="Garancia kezelés" onclick="location.href = '/project/integration';" class="btn-add"><i class="fa fa-refresh"></i></a>
+				            <a href="javascript:;" title="Lezárt" onclick="location.href = '/project/completed';" class="btn-add"><i class="fa fa-check"></i></a>
+				            <a href="javascript:;" title="Felmérések" onclick="location.href = '/project/mensuration';" class="btn-add"><i class="fa fa-arrows"></i></a>
+				            <a href="javascript:;" title="Projekt értesítések" onclick="location.href = '/project/notify';" class="btn-add"><i class="fa fa-clock-o"></i></a>
+			            </div>
+		            </div>
+                </div>
+            </div>
+        </div>
+        <div class="entity-list entity-list-expandable list">
+        </div>
+    </projects>
+    <search>
+        <div class="entity-list entity-list-expandable list">
+        </div>
+    </search>
+    <sessionproject></sessionproject>
+    <sidebar>
+    </sidebar>
+</main>
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script src="js/vendor/jquery.min.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/app.js?v=1"></script>
+<script>if (window.module) module = window.module;</script>
+</body></html>

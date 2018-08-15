@@ -1,0 +1,56 @@
+view {
+    display:block;
+    box-shadow: 0 0 1px 0px #777777;
+}
+
+.entity-list {
+    padding-top:60px;
+}
+
+
+
+.order-color { background: #FF8F00 !important; } /* v kÃ©k */
+.integration-color { background:#9c27b0 !important; } /* lila */
+.shipping-color { background:#3f51b5 !important; } /* kÃ©k */
+.manorder-color { background:#FFFF8D !important; } /* narancs */
+.resorder-color { background:#F4511E !important; } /*piros*/
+.request-color { background:#00bcd4 !important; } /* ciÃ¡n */
+.quote-color { background: #97c95d !important; }
+.completed-color { background: #9bb9aa !important;} /* zÃ¶ld  #8bc34a */
+ 
+.production-color  { background: #ffd0b4 !important;} /* zÃ¶ld  #8bc34a */
+.preproduction-color{ background: #9ba8b9 !important;} /* zÃ¶ld  #8bc34a */
+.billing-color { background: #5a5c87 !important;} /* zÃ¶ld  #8bc34a */
+.mensuration-color { background: #27b0a6 !important;} /* zÃ¶ld  #8bc34a */
+
+
+
+.order-color .order { background: #FF8F00 !important; } /* v kÃ©k */
+.integration-color .integration { background:#9c27b0 !important; } /* lila */
+.shipping-color .shipping { background:#3f51b5 !important; } /* kÃ©k */
+.manorder-color .manorder { background:#FFFF8D !important; } /* narancs */
+.resorder-color .resorder { background:#F4511E !important; } /*piros*/
+.request-color .request { background:#00bcd4 !important; } /* ciÃ¡n */
+.quote-color .quote { background: #97c95d !important; }
+.completed-color .completed { background: #9bb9aa !important;} /* zÃ¶ld  #8bc34a */
+
+.production-color .production  { background: #ffd0b4 !important;} /* zÃ¶ld  #8bc34a */
+.preproduction-color .preproduction { background: #9ba8b9 !important;} /* zÃ¶ld  #8bc34a */
+.billing-color .billing { background: #5a5c87 !important;} /* zÃ¶ld  #8bc34a */
+.mensuration-color .mensuration { background: #27b0a6 !important;} /* zÃ¶ld  #8bc34a */
+
+.dropdown-menu {
+    min-width:215px;
+}
+
+.list-pid {
+    vertical-align: middle;
+    line-height: 40px;
+    text-align: center;
+    margin: 0 6px;
+    width: 55px !important;
+}
+
+.entity-list .entity-list-item .item-content-expanded {
+    text-align:left;
+}

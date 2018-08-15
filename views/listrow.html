@@ -1,0 +1,64 @@
+<div class="entity-list-item" style="max-width:100%;" id="<?=project_id?>">
+    <div class="item-icon <?=stadium?>-color statlistcolor">
+		<div class="dropdown theme-alt"  style="display: block;" >
+			<span class="glyph glyph-sync dropdown-toggle"  data-toggle="dropdown"><i class="glyphicon glyphicon-transfer"></i></span>
+			<ul data-pid="<?=project_id?>" class="dropdown-menu">
+			    <li class="quote" data-s="quote"><a>Árajánlat</a></li>
+			    <li class="order" data-s="order"><a>Megrendelés</a></li>
+			    <li class="resorder" data-s="resorder"><a>Viszonteladói megrendelés</a></li>
+				<li class="manorder" data-s="manorder"><a>Gyártói megrendelés</a></li>
+				<li class="preproduction" data-s="preproduction"><a>Gyártás előkészítése</a></li>
+				<li class="production" data-s="production"><a>Gyártás</a></li>
+				<li class="billing" data-s="billing"><a>Számlázás</a></li>
+				<li class="shipping" data-s="shipping"><a>Komplett, szállítható</a></li>
+				<li class="integration" data-s="integration"><a>Garancia kezelés</a></li>
+				<li class="completed" data-s="completed"><a>Lezárt</a></li>
+				<li class="mensuration" data-s="mensuration"><a>Felmérés</a></li>
+			</ul>
+		</div>
+    </div>
+    <? if(pid!='' && USER.data.insider){ ?>
+        <? if(events==false){ ?>
+            <div class="item-icon list-pid"><?=pid?></div>
+        <? } else { ?>
+                <? if(events.allok==0){ ?>
+                    <div data-id="<?=events.allok?>" class="item-icon list-pid" style="background:#D02E00;"><?=pid?></div>
+                <? } else { ?>
+                    <div data-id="<?=events.allok?>" class="item-icon list-pid" style="background:green;"><?=pid?></div>
+                <? } ?> 
+        <? } ?>
+    <? } ?>
+    <div class="item-content-secondary">
+        <div class="content-text-primary"><?=owner_name?></div>
+        <div class="content-text-secondary"><?=creation?></div>
+    </div>
+    <div class="item-content-primary">
+        <div class="content-text-primary"><?=qnum?> - <?=name?> </div>
+        <div class="content-text-secondary"><?=customer_name?>  <?=customer_email?></div>
+        <div class="content-text-secondary" style="color:#D02E00"><?=comment?></div>
+        <div class="progress hidden">
+            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                <span class="sr-only">60%</span>
+            </div>
+        </div>
+    </div>
+    <div class="item-content-expanded">
+        <div class="row section-gallery">
+            <div class="col-md-24">
+                <div class="project-events"></div>    
+            </div>
+        </div>
+        <div class="row section-gallery">
+            <div class="col-md-12">
+                <div class="project-datas"></div>    
+            </div>
+            <div class="col-md-12">
+                <div class="project-list"></div>    
+            </div>
+        </div>
+        <!--
+        <button class="btn btn-default" disabled="disabled">Uninstall</button>
+        <button class="btn btn-default">Move</button>
+        -->
+    </div>
+</div>

@@ -1,0 +1,552 @@
+
+
+
+
+
+
+
+<tr id="m<?= $project->project_id; ?>" data-id="<?= $project->project_id; ?>" class="mainrow <?php echo ($index % 2 == 1 ) ? 'oddrow' : 'evenrow' ?>">
+			    <td class="searchid" style="background: white;padding: 0;width: 20px;text-align: center;" data-id="<?= $project->project_id; ?>"><?= $index+1; ?></td>
+
+			<?php if (INSIDER==1): 
+        
+    				
+    				$sql = "SELECT * FROM project_events where pid = '{$project->pid}'";
+				    $result = $q->execute($sql);
+    				$json = $result->fetch();
+    				$allok = false;
+    				
+    				$allokhtml = '<span style="color:black;">' . $project->pid . '</span>';
+    				
+    				$tdcolor = "transparent";
+    				
+    				if($json) {
+    				    $allok = ($json['allok'] == 0) ? false : true;
+    				    
+    				    if($allok) {
+    					$tdcolor = "#239b23";
+    					$allokhtml = '<span style="color:#239b23;">' . $project->pid . '</span>';
+    				    } else {
+    					$tdcolor = "transparent";
+    					$allokhtml = '<span style="color:red;">' . $project->pid . '</span>';
+    				    }
+    				} 
+        
+    		    ?>
+			
+			<td style="border-right:10px solid <?=$tdcolor?>; padding-right: 5px;width: 40px;"><b class="eventbtn" data-pid="<?= $project->pid; ?>" data-id="<?= $project->project_id; ?>"><?=$allokhtml; ?></b></td>
+			    
+			<?php endif;?>
+			
+			    
+			    <td><?php echo $dateInLocal = date("Y-m-d H:i", strtotime($project->creation_date)); ?></td>
+			    
+				
+    <?php if (INSIDER==1): 
+			    
+			    if(empty($json['pid'])): ?>
+				<td></td>
+			    <?php else : ?>
+				<?php if($json['mailed']=="1"): ?>
+				    <td data-pid="<?=$json['pid']?>" data-m="1" title="Értesítő kiküldve" style="cursor-pointer;padding:0;background: #239b23;border: 1px solid #ccc;width:6px !important;" class="statlistcolor project-mailed"></td>
+				<?php else : ?>
+				    <td data-pid="<?=$json['pid']?>" data-m="0" title="Értesítő nincs kiküldve" style="cursor-pointer;padding:0;background: #fff;border: 1px solid #ccc;width:6px !important;" class="statlistcolor project-mailed"></td>
+				<?php endif; ?>
+				    
+			    <?php endif; ?>
+		    
+		    
+		    <?php else: ?>
+			<td style="padding:0;"></td>
+		    
+		    <?php endif;?>
+			    
+			    <td class="<?=$project->getCurrentStadium()?>-color statlistcolor">
+				
+				<div class="dropup dropdown"  style="display: block;" >
+					<i style="font-size: 13px;padding:0px;color:#545454;" class="fa fa-refresh dropdown-toggle text-center" data-toggle="dropdown"></i>
+					<ul data-pid="<?=$project->project_id?>" class="dropdown-menu">
+					    <li class="quote" data-s="quote"><h2>Árajánlat</h2></li>
+					    <li class="order" data-s="order"><h2>Megrendelés</h2></li>
+					    <li class="resorder" data-s="resorder"><h2>Viszonteladói megrendelés</h2></li>
+					    <li class="manorder" data-s="manorder"><h2>Gyártói megrendelés</h2></li>
+					    <li class="preproduction" data-s="preproduction"><h2>Gyártás előkészítése</h2></li>
+					    <li class="production" data-s="production"><h2>Gyártás</h2></li>
+					    <li class="billing" data-s="billing"><h2>Számlázás</h2></li>
+					    <li class="shipping" data-s="shipping"><h2>Komplett, szállítható</h2></li>
+					    <li class="integration" data-s="integration"><h2>Garancia kezelés</h2></li>
+					    <li class="completed" data-s="completed"><h2>Lezárt</h2></li>
+					    <li class="mensuration" data-s="mensuration"><h2>Felmérés</h2></li>
+					</ul>
+				</div>
+			    </td>
+			    
+			    
+			    <td>
+				<?php
+    				$plq = $q->execute("SELECT * from `project_load` WHERE pid = '{$project->project_id}' ");
+    				$usesby = $plq->fetchAll();
+    				$usecount = count($usesby);
+    				if($usecount > 0) {
+    				    $usrs = ""; foreach ($usesby as $us) { $usrs .= $us['user'] . " "; }
+    				    echo '<i class="fa fa-lock" title="Most szerkeszti: '.$usrs.'" style="font-size:18px; color:red;"></i> ';
+    				}
+				?>
+				
+				<?php if(Project::isLocked($project->project_id)): ?>
+				<i class="fa fa-lock" title="Megrendelt és zárolt projekt" style="font-size:18px"></i> <a href="<?php if(USER=="boss") { echo url_for('tradequoter/loadproject?id='.$project->project_id) . "/task/data"; } else { echo "#"; } ?>">
+				    <?php echo $project->identifier ?><?php if (CurrentUser::GetUserIdName($project->owner_id) !== null) { echo "-".CurrentUser::GetUserIdName($project->owner_id); } ?>
+				</a>
+				<?php else : ?>
+				<a href="<?php echo url_for('tradequoter/loadproject?id='.$project->project_id) ?>/task/data">
+				<?php echo $project->identifier ?><?php if (CurrentUser::GetUserIdName($project->owner_id) !== null) { echo "-".CurrentUser::GetUserIdName($project->owner_id); } ?>
+				</a>
+				<?php endif; ?>
+			    </td>
+			    
+			    
+			    <td><?php echo $project->name ?></td>
+			    
+			    <?php if($project->getCurrentStadium() == "request") :  // webshop 
+			    
+			          $idi = $project->project_id;
+			          $sql = "SELECT * FROM project_webshop WHERE project_id='{$idi}' limit 1";
+			          $result = $q->execute($sql);
+			          $cache = $result->fetch();
+			          
+			          ?>
+			          
+			        <td><?=$cache['customer_name']?></td>
+			        <td><?=$cache['customer_email']?></td>
+			        <td><?=$cache['customer_phone']?></td>
+			    
+			    <?php else : ?>
+			    
+			        <td><?php echo $project->customer_name ?></td>
+			        <td><?php echo $project->customer_email ?></td>
+			        <td><?php echo $project->customer_phone ?></td>
+			    
+			    <?php endif; ?>
+			    
+			    
+			    
+			    <td style="max-width: 100px;" title="<?=$project->comment?>" ><b>
+				<?php if(strlen($project->comment) > 80)
+					    echo substr($project->comment, 0, 100) . "...";
+				      else 
+					    echo $project->comment;
+			    
+			    ?>
+				</b>
+			    </td>
+			    
+			    
+			    <?php if ($sf_user->hasPermission('projects_view') || $sf_user->hasPermission('subusers')): ?>
+				<td><?php echo $project->owner_name ?></td>
+			    <?php endif;?>
+			    
+			    <td style="padding:0;" >
+				
+    <?php if (INSIDER==1): ?>
+    
+    
+				
+				<?php
+				
+			    	$pid = $project->project_id;
+			    	$sql = "SELECT * FROM todos WHERE pid='{$pid}' and completed=0";
+			    	$result = $q->execute($sql);
+			    	$todos = $result->fetchAll();
+				    if(count($todos) > 0) : ?>
+				    <div class="dropup dropdown"  style="display: inline-block;" >
+					<i style="font-size: 20px;padding:0;color: red;" class="fa fa-exclamation-triangle dropdown-toggle" data-toggle="dropdown"></i>
+					<span class="badge"><?=count($todos)?></span>
+					<ul class="dropdown-menu" style="width: 230px;box-shadow: 1px 1px 7px -1px #888;" >
+					    <?php foreach ($todos as $todo): ?>
+					    <li style="padding: 5px; border-bottom:1px solid #999;cursor:pointer;" onclick="window.location.href='/tradequoter/loadproject/id/<?=$project->project_id?>/task/data';">
+						<p style="margin: 0;line-height: 9px;padding:4px 0; color:red;"><?=$todo['until']?></p>
+						<h2 style="margin: 0;font-size:13px;" ><b><?=$todo['todo']?></b></h2>
+					    </li>
+					    <?php endforeach; ?>
+					</ul>
+				    </div>
+				    <?php endif; ?>
+				
+				<?php endif; ?>
+				
+			    </td>
+		    
+		    <?php if (INSIDER==1): ?>		
+        
+			    <?php 
+			    
+			    $sql = "SELECT * FROM project_events where pid = '{$project->pid}'";
+			    $result = $q->execute($sql);
+    			$json = $result->fetch();
+    			$pay = array();
+    			if($json) {
+    			    $pay = json_decode($json['pay'], TRUE);
+    			}
+			    
+			    if($pay['endpaidok']=="ok"): ?>
+				<td style="padding:0;background: #239b23;border: 1px solid #ccc;width:6px !important;" class="statlistcolor"></td>
+			    <?php else : ?>
+				<td style="padding:0;background: #fff;border: 1px solid #ccc;width:6px !important;" class="statlistcolor"></td>
+			    <?php endif; ?>
+		    
+	    <?php else : ?>
+		    <td></td>
+	    <?php endif; ?>
+		    
+			    
+			    
+			    <td style="padding:0;">
+				<i style="font-size: 20px;padding: 2px 12px; color: #777;" class="fa moredata fa-list" />
+			    </td>
+			    <td class="td9" style="width: 160px;">
+			    <?php if ($sf_user->hasPermission('projects_edit') || $project->owner_id == CurrentUser::GetCurrentUserId() || $sf_user->hasPermission('subusers')): ?>
+				
+				<!--
+				<a title="<?php echo get_string("Másol");?>" href="<?php echo url_for('project/cloneproject?pid='.$project->project_id) ?>" class="btn btn-sm btn-primary">
+	                	    <i class="fa fa-edit"></i>
+				</a>
+				-->
+				<div class="dropup dropdown"  style="display: inline-block;" >
+				    <button class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
+					<i class="fa fa-file-pdf-o"></i>
+				    </button>
+				    <ul class="dropdown-menu">
+					    <li style="padding: 5px;">
+						<button class="btn btn-primary btn-sm btn-block" onclick="window.open('<?php echo "/tradequoter/loadproject/id/{$project->project_id}/task/print/template_name/cill" ?>', '_blank');">
+						    <i class="fa fa-print m-r-5"></i> Párkányok
+						</button>
+					    </li>
+					    <li style="padding: 5px;">
+						<button class="btn btn-primary btn-sm btn-block" onclick="window.open('<?php echo "/tradequoter/loadproject/id/{$project->project_id}/task/print/template_name/acc" ?>', '_blank');">
+						    <i class="fa fa-print m-r-5"></i> Kiegészítők
+						</button>
+					    </li>
+					    <li style="padding: 5px;">
+						<button class="btn btn-primary btn-sm btn-block" onclick="window.open('<?php echo "/tradequoter/loadproject/id/{$project->project_id}/task/print/template_name/shading" ?>', '_blank');">
+						    <i class="fa fa-print m-r-5"></i> Árnyékolás
+						</button>
+					    </li>
+					    
+					<?php foreach ($params['user_templates'] as $key => $template): ?>
+					    <li style="padding: 5px;">
+						<button class="btn btn-primary btn-sm btn-block" onclick="window.open('<?php echo "/tradequoter/loadproject/id/{$project->project_id}/task/print/template_name/{$template->template_name}" ?>', '_blank');">
+						    <i class="fa fa-print m-r-5"></i> <?=$template->document_name?>
+						</button>
+					    </li>
+					<?php endforeach; ?>
+				    </ul>
+				</div>
+				
+				<div class="dropup dropdown" style="display: inline-block;" >
+				    <button class="btn btn-default btn-sm dropdown-toggle" data-placement="left" data-toggle="dropdown" title="<?php echo get_string("Másol");?>">
+					<i class="fa fa-edit"></i>
+				    </button>
+				    <ul class="dropdown-menu" style="left: auto;bottom: auto;right: 0;" >
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás mindent");?>" href="<?php echo url_for('project/cloneproject?pid='.$project->project_id) ?>" class="btn btn-default">
+					          <i class="fa fa-edit"></i> <?php echo get_string("Másolás mindent");?>
+					    </a>
+					</li>
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás kiegészítők nélkül");?>" href="<?php echo url_for('project/cloneprojectwo?pid='.$project->project_id) ?>" class="btn
+					    btn-default">
+					          <i class="fa fa-edit"></i> <?php echo get_string("Másolás kieg. nélkül");?>
+					    </a>
+					</li>
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Ajtó másolás kiegészítők nélkül");?>" href="<?php echo url_for('project/cloneprojectwodoor?pid='.$project->project_id) ?>" class="btn
+					    btn-default">
+					          <i class="fa fa-edit"></i> <?php echo get_string("Ajtó másolás kieg. nélkül");?>
+					    </a>
+					</li>
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás toktoldók nélkül");?>" href="<?php echo url_for('project/cloneprojectwofr?pid='.$project->project_id) ?>" class="btn
+					    btn-default">
+					          <i class="fa fa-edit"></i> <?php echo get_string("Másolás toldó nélkül");?>
+					    </a>
+					</li>
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás csak árnyékolás");?>" href="<?php echo url_for('project/cloneprojectrolls?pid='.$project->project_id) ?>" class="btn
+					    btn-default">
+					          <i class="fa fa-edit"></i> <?php echo get_string("Másolás csak árny.");?>
+					    </a>
+					</li>
+					
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás tripla üveggel");?>" href="<?php echo url_for('project/cloneprojectglass?pid='.$project->project_id) ?>" class="btn
+					    btn-primary cloneglass">
+					          <i class="fa fa-edit"></i> <?php echo get_string("Másolás tripla üveggel");?>
+					    </a>
+					</li>
+					
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás színcserével");?>" href="<?php echo url_for('project/cloneprojectcolor?pid='.$project->project_id) ?>" class="btn
+						btn-warning clonecolor">
+				    	    <i class="fa fa-edit"></i> <?php echo get_string("Másolás színcserével");?>
+					    </a>
+					</li>
+			    
+					<li style="padding: 5px;">
+					    <a style="height: auto;" title="<?php echo get_string("Másolás profilváltással");?>" href="<?php echo url_for('project/cloneprojectprofile?pid='.$project->project_id) ?>" class="btn
+						btn-success cloneprofile">
+				    	    <i class="fa fa-edit"></i> <?php echo get_string("Másolás profilváltással");?>
+					    </a>
+					</li>
+					
+				    </ul>
+				</div>
+				
+				<?php if(Project::isLocked($project->project_id)): ?>
+
+				<a title="<?php echo get_string("Megrendelt és zárolt projekt");?>" href="<?php
+				    if(USER=="boss") { echo url_for('tradequoter/loadproject?id='.$project->project_id); } else { echo "#"; } ?>" class="btn btn-sm btn-primary">
+	                	    <i class="fa fa-lock"></i>
+				</a>
+
+				<?php else : ?>
+
+				<a title="<?php echo get_string("General/Edit");?>" href="<?php echo url_for('tradequoter/loadproject?id='.$project->project_id) ?>" class="btn btn-sm btn-primary">
+	                	    <i class="fa fa-pencil"></i>
+				</a>
+
+				<?php endif; ?>
+
+				<button title="<?php echo get_string("General/Delete");?>" onclick="if (confirm('Are you sure?')) document.location='<?php echo url_for('project/delete?id='.$project->project_id) ?>'" class="btn btn-danger btn-sm">
+	                	    <i class="fa fa-times"></i>
+				</button>
+
+				<?php if(ORIGINID != 50 && !Project::isLocked($project->project_id)): ?>
+				    <button title="<?php echo get_string("Megrendélés beküldése");?>" onclick="if (confirm('A projekt zárolva lesz a feldologozás után. Biztosan megrendeli és lezárja a projektet ?')) document.location='<?php echo url_for('project/exportproject?pid='.$project->project_id) ?>'" class="btn btn-waring btn-sm">
+	                		<i class="fa fa-send"></i>
+				    </button>
+				<?php endif; ?>
+				
+			    <?php endif;?>
+			    </td>
+
+			</tr>
+			<tr class="hidden eventsrow" data-pid="<?= $project->pid; ?>" data-id="<?= $project->project_id; ?>" id="e<?= $project->project_id; ?>" style="background:#dfdfdf;min-height:100px;" >
+			    <td colspan="16" style="padding:0 0px;">
+			    <div class="events" style="background:#dfdfdf;min-height:100px;width:100%;display:block;padding-left:10px;position:relative;">
+				<?php
+				    
+				    $win = array("type"=>"win", "name"=>"ABLAK","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    $door = array("type"=>"door", "name"=>"AJTÓ","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    $ext = array("type"=>"ext", "name"=>"SZEGŐLÉC/PÁRKÁNY","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    $pan = array("type"=>"pan", "name"=>"PANEL","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    $rols = array("type"=>"rols", "name"=>"REDŐNY","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    $net = array("type"=>"net", "name"=>"SZÚNYOGHÁLÓ","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    $store = array("type"=>"store", "name"=>"RAKTÁR","origin"=>"","send"=>"","arrive"=>"","price"=>0,"finished"=>0,"paid"=>"","info"=>"");
+				    
+				    $djson = array(
+					$win,
+					$door,
+					$pan,
+					$ext,
+					$rols,
+					$net,
+					$store
+				    );
+				    
+				
+				    $sql = "SELECT * FROM project_item as pi LEFT JOIN project_item_version as piv on piv.item_id = pi.id where pi.project_id = '{$project->project_id}' ";
+				    $result = $q->execute($sql);
+    				$items = $result->fetchAll();
+    				
+    				$counts = array();
+    				$counts['door'] = 1;
+    				$counts['win'] = 1;
+    				$counts['pan'] = 1;
+    				//$counts['ext'] = 1;
+    				$counts['rols'] = 1;
+    				$counts['net'] = 1;
+    				
+    				
+				    $sql = "SELECT * FROM project_events where pid = '{$project->pid}'";
+				    $result = $q->execute($sql);
+    				$json = $result->fetch();
+    				
+    				$sum = 0;
+    				$allok = false;
+    				
+    				$allokhtml = '<span style="color:red;">Befejezettlen</span>';
+    				
+    				if($json) {
+    				    $djson = json_decode($json['json'], TRUE);
+    				    
+    				    $pay = json_decode($json['pay'], TRUE);
+    				    
+    				    $sum = $json['price'];
+    				    $allok = ($json['allok'] == 0) ? false : true;
+    				    
+    				    $sum = number_format($sum, 0,",",",");
+    				    
+    				    if($allok) 
+    					$allokhtml = '<span style="color:green;">Komplett</span>';
+    				}
+    				
+    				
+    				foreach ($items as $item) : 
+    				    
+    				?>
+    				
+    				<?php endforeach; ?>
+
+    				<div class="col-xs-2 project-status-box cursor-pointer" style="height: 348px;padding:0px;margin:10px;width:290px;float:right;display:block;font-weight: 600;">
+    				    <div class="payments">
+    					<h4 style="margin: 0;padding: 5px 0 5px;font-size: 12px;height: 24px;background: #6495ed;color: white;"><b>Fizetési információk</b></h4>
+    					
+    					<div class="prepaidv" style="padding-top: 10px;padding-right:5px; width:100%" >ELŐLEG ÖSSZEGE <input class="pull-right" style="margin:0px;width: 50%;text-align:center;color: red;font-size: 16px;line-height: 11px;padding: 0;" type="text" value="<?= $pay['prepaidv']; ?>" /></div>
+					    <div class="prepaidd" style="padding-bottom: 11px; padding-top: 10px;padding-right:5px; width:100%" >IDŐPONTJA <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?= $pay['prepaidd']; ?>" /></div>
+    					<div class="prepaidbtn" style="padding-left: 36px; width:100%;text-align:left;" ><button <?php if($pay['prepaidok']=="ok") { echo ' data-preok="ok" '; } else { echo ' data-preok="n" '; } ?> class="prepaid-ok" style="margin-bottom: 6px;margin-left: 0;font-size: 10px; <?php if($pay['prepaidok']=="ok") { echo "background:#49cc49;color:#fff; ";} ?>">BEÉRKEZETT</button></div>
+    					
+					    <div class="partpaidv" style="border-top: 1px solid #ccc;padding-top: 5px;padding-right:5px; width:100%" >RÉSZFIZETÉS ÖSSZEGE <input class="pull-right" style="margin:0px;width: 50%;text-align:center;color: red;font-size: 16px;line-height: 11px;padding: 0;" type="text" value="<?= $pay['partpaidv']; ?>" /></div>
+					    <div class="partpaidd" style="padding-bottom: 11px;padding-top: 10px;padding-right:5px;width:100%" >IDŐPONTJA <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?= $pay['partpaidd']; ?>" /></div>
+    					<div class="partpaidbtn" style="padding-left: 36px; width:100%;text-align:left;" ><button <?php if($pay['partpaidok']=="ok") { echo ' data-partok="ok" '; } else { echo ' data-partok="n" '; } ?> class="partpaid-ok" style="margin-bottom: 6px;margin-left: 0;font-size: 10px; <?php if($pay['partpaidok']=="ok") { echo "background:#49cc49;color:#fff; ";} ?>">BEÉRKEZETT</button></div>
+    					
+					    <div class="endpaidv" style="border-top: 1px solid #ccc;padding-top: 5px;padding-right:5px;width:100%" >VÉGSZÁMLA ÖSSZEGE <input class="pull-right" style="margin:0px;width: 50%;text-align:center;color: red;font-size: 16px;line-height: 11px;padding: 0;" type="text" value="<?= $pay['endpaidv']; ?>" /></div>
+					    <div class="endpaidd" style="padding-top: 10px;padding-right:5px;width:100%" >IDŐPONTJA <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?= $pay['endpaidd']; ?>" /></div>
+					    <div class="endpaidl" style="padding-bottom: 11px;padding-top: 10px;padding-right:5px;width:100%" >LEJÁRAT <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?= $pay['endpaidl']; ?>" /></div>
+    					<div class="endpaidbtn" style="padding-left: 36px; width:100%;text-align:left;" ><button <?php if($pay['endpaidok']=="ok") { echo ' data-endok="ok" '; } else { echo ' data-endok="n" '; } ?> class="endpaid-ok" style="margin-bottom: 6px;margin-left: 0;font-size: 10px; <?php if($pay['endpaidok']=="ok") { echo "background:#49cc49;color:#fff; ";} ?>">BEÉRKEZETT</button></div>
+    					
+    					<div class="totalpaid" style="border-top: 1px solid #ccc;padding-top:5px;padding-right:5px;width:100%">TOTÁL <input class="pull-right" style="border:none;font-size:16px;padding:0;font-weight:bold;margin:0px;width: 50%;text-align:center;color:#000;" type="text" value="<?= $pay['totalpaid']; ?>" /></div>
+    					<br/>
+    				    </div>
+    				</div>
+    				
+    				<button style="position:absolute;top:10px;right:10px;" class="showpboxprice" ><i class="fa fa-level-down"></i></button>
+    				<h1 style="margin:0;padding:10px 0;width:auto!important;" class="statlistcolor" >Rendelés száma: <?= $project->pid; ?> &nbsp; &nbsp; <?=$allokhtml;?> &nbsp; &nbsp; &nbsp; &nbsp; <span class="sum price">Végösszeg : <b><?=$sum;?></b> FT</span> &nbsp; &nbsp; &nbsp; &nbsp; 
+    				
+    				<div class="dropup dropdown"  style="display: inline-block;" >
+					<button style="height:24px;" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+					    <ul class="dropdown-menu addpanel">
+						<li data-id="door" style="padding: 5px;"> Ajtó </li>
+						<li data-id="win" style="padding: 5px;"> Ablak </li>
+						<li data-id="pan" style="padding: 5px;"> Panel </li>
+						<li data-id="rols" style="padding: 5px;"> Redőny </li>
+						<li data-id="ext" style="padding: 5px;"> Szegőléc / Párkány </li>
+						<li data-id="net" style="padding: 5px;"> Szúnyogháló </li>
+						<li data-id="store" style="padding: 5px;"> Raktári </li>
+					    </ul>
+    				</h1>
+    				<div class="r">
+    				
+    				<?php foreach ($djson as $k => $box) :
+    				
+    					//<?= $counts[$box['type']]++ 
+    					if($box['finished'] == 0)  
+    					    $boxstyle = "background: #ccc;";
+    					if($box['finished'] == 1)  
+    					    $boxstyle = "background:blue;color:white;";
+    					if($box['finished'] == 2)  
+    					    $boxstyle = "background:green;color:white;";
+    					
+    				?>
+    				
+    				<div class="col-xs-1 project-status-box cursor-pointer" style="height:auto;padding:0px;margin:6px;width:170px;">
+    				    <div class="box" data-pid="<?= $project->pid; ?>" data-id="<?=$k?>" data-type="<?=$box['type'] ?>" data-finished="<?=$box['finished'] ?>">
+    					<button class="pull-right ok-event-box">OK</button>
+    					<button class="pull-left close-event-box">X</button>
+    					<h4 style="margin: 0;padding: 5px 0 5px;font-size: 12px;height: 24px;<?=$boxstyle?>" ><b><?=$box['name'] ?> </b></h4>
+    					<div class="pull-left origin" style="padding-top:10px;padding-right:5px;" >GYÁRTÓ <input class="pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?=$box['origin']?>" /></div>
+    					<br/>
+    					<div class="pull-left info" style="padding-top:10px;padding-right:5px;" >INFO <input class="pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" title="<?=$box['info']?>" value="<?=$box['info']?>" /></div>
+    					<br/>
+    					<div class="pull-left send" style="padding-top:10px;padding-right:5px;" >LEADVA <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?=$box['send']?>" /></div>
+    					<br/>
+    					<div class="pull-left arrive" style="padding-top:10px;padding-right:5px;">ÉRKEZETT <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?=$box['arrive']?>" /></div>
+    					<br/>
+    					<div class="pull-left price" style="padding-top:10px;padding-bottom:5px;padding-right:5px;">ÁR <input class="pull-right" style="margin:0px;width: 50%;text-align:center;" type="text" value="<?=$box['price']?>" /></div>
+    					<br/>
+    					<?php $paid = ""; if(!empty($box['paid'])) $paid = "background:green;color:#fff"; ?>
+    					<div class="pull-left paid" style="padding:5px 0px;padding-right:5px; <?=$paid?>">FIZETVE <input class="date-picker pull-right" style="margin:0px;width: 50%;text-align:center;color:#000;" type="text" value="<?=$box['paid']?>" /></div>
+    					<br/>
+    				    </div>
+    				</div>
+    					
+    			    <?php endforeach; ?>
+    				</div>
+    				
+    			    <div class="clearfix"></div>
+    			    
+    			    
+    			    <?php if(empty($json['line'])): ?>
+    				<div class="project-status-box cursor-pointer oneliner" contenteditable="true">Engem át lehet írni.</div>
+    			    <?php else : ?>
+    				<div class="project-status-box cursor-pointer oneliner" contenteditable="true"><?= $json['line']; ?></div>
+    			    <?php endif; ?>
+    			    
+    			    <div class="clearfix"></div>
+    			    
+			    </div>
+			</td></tr>
+			<tr class="hidden subrow" id="s<?= $project->project_id; ?>" style="background:#dfdfdf;min-height:100px;" >
+			    <td colspan="16">
+			    <div class="data" style="width:100%; margin:0 auto; display:block;">
+				<?php
+				    $result = $q->execute("SELECT * FROM pnotify where pid = '".$project->project_id."' limit 1;");
+				    $noti = $result->fetch();
+				    if($noti) {
+					$notify_project_alert = $noti['datum'];
+					$notify_project_text = $noti['text'];
+				    } else {
+					$notify_project_alert = 0;
+					$notify_project_text = '';
+				    }
+				?>
+				
+				<div class="row">
+				    <div class="maindata">
+    				    <div class="col-md-3"></div>
+    				    <div class="col-md-3"></div>
+    				    <div class="col-md-2"></div>
+    				    <div class="col-md-4">
+        				<?php if($notify_project_alert != 0): ?>
+					    <i style="font-size: 13px;margin-right: 7px;margin-top: 5px;" class="fa fa-exclamation-triangle" aria-hidden="true"></i> <b style="line-height:20px;"><?=$notify_project_alert; ?></b>
+					    <hr/>
+					    <div><?=$notify_project_text;?></div>
+        				<?php endif; ?>
+    				    </div>
+				    </div>
+				    <script>
+    				    (function() {
+					    var d = '<?=$notify_project_alert;?>';
+					    if(d!='0') {
+						var today = moment();
+						var tomorrow = today.add('days', 1);
+						var alertday = moment(d);
+						if(alertday.isBefore(today, 'day')) { console.log("before"); }
+						if(alertday.isSame(tomorrow, 'day')) { console.log("will be tomorrow");
+						    $("tr[data-id='<?=$project->project_id;?>'] td").css("background-color", "rgba(255, 165, 0, 0.64)");
+						}
+						if(alertday.isSame(moment(), 'day')) { console.log("will be today");
+						    $("tr[data-id='<?=$project->project_id;?>'] td").css("background-color", "rgba(255, 0, 0, 0.64)").css("color", "#fff");
+						}
+						if(alertday.isAfter(tomorrow, 'day')) { console.log("will be in future"); }
+						if(today.isAfter(alertday, 'day')) { console.log("DEAD"); }
+    					}
+					})();
+				    </script>
+				</div>
+				<!--<async route="/project/getinfo/id/<?= $project->project_id; ?>" target="#s<?= $project->project_id; ?> .data" cb="(function(){ })();" />-->
+			    </div>
+			    <div class="subrowtabs">	
+				<ul class="nav nav-tabs">
+				    <li class="active"><a href="#itemstab<?= $project->project_id; ?>" data-toggle="tab">Tétel Lista</a></li>
+				    <li><a href="#datastab<?= $project->project_id; ?>" class="loaddatas" data-toggle="tab" data-id="<?= $project->project_id; ?>" >Project adatok</a></li>
+				</ul>
+				<div class="tab-content">
+	    			<div class="tab-pane active" id="itemstab<?= $project->project_id; ?>">
+        				<div class="itemlist"></div>		
+				    </div>
+				    <div class="tab-pane" id="datastab<?= $project->project_id; ?>">
+					<div class="dataslist"></div>
+				    </div>
+				</div>
+			    </div>
+			</td></tr>
